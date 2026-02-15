@@ -22,32 +22,41 @@ function App() {
   );
 
   function submitForm(formData) {
-    if (
+    const success =
       typeof window !== 'undefined' &&
       window.submitAPI &&
-      window.submitAPI(formData)
-    ) {
+      window.submitAPI(formData);
+    if (success) {
       navigate('/booking-confirmed');
     }
+    return Boolean(success);
   }
 
   return (
     <div className="App">
       <header className="App-header">
         <h1>Little Lemon</h1>
-        <nav>
+        <nav aria-label="Main navigation">
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/" aria-label="Go to home">
+                Home
+              </Link>
             </li>
             <li>
-              <Link to="/about">About Us</Link>
+              <Link to="/about" aria-label="Go to About Us">
+                About Us
+              </Link>
             </li>
             <li>
-              <Link to="/blog">Blog</Link>
+              <Link to="/blog" aria-label="Go to Blog">
+                Blog
+              </Link>
             </li>
             <li>
-              <Link to="/booking">Reservations</Link>
+              <Link to="/booking" aria-label="Go to Reservations">
+                Reservations
+              </Link>
             </li>
           </ul>
         </nav>

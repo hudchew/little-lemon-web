@@ -11,12 +11,20 @@ function BookingForm({
   const [time, setTime] = useState(defaultTimes[0]);
   const [guests, setGuests] = useState(1);
   const [occasion, setOccasion] = useState('Birthday');
+  const [submitError, setSubmitError] = useState('');
+
+  const isFormValid =
+    date.trim() !== '' && guests >= 1 && guests <= 10 && time.trim() !== '';
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setSubmitError('');
     const formData = { date, time, guests, occasion };
     if (submitForm) {
-      submitForm(formData);
+      const success = submitForm(formData);
+      if (!success) {
+        setSubmitError('Reservation could not be submitted. Please try again.');
+      }
     } else if (
       typeof window !== 'undefined' &&
       window.submitAPI &&
@@ -30,12 +38,19 @@ function BookingForm({
     <form
       style={{ display: 'grid', maxWidth: '200px', gap: '20px' }}
       onSubmit={handleSubmit}
+      aria-label="Table reservation form"
     >
       <label htmlFor="res-date">Choose date</label>
+      {!date.trim() && (
+        <span role="status" style={{ fontSize: '0.85em', color: '#666' }}>
+          Please choose a date to continue.
+        </span>
+      )}
       <input
         type="date"
         id="res-date"
         value={date}
+        required
         onChange={(e) => {
           const newDate = e.target.value;
           setDate(newDate);
@@ -46,6 +61,7 @@ function BookingForm({
       <select
         id="res-time"
         value={time}
+        required
         onChange={(e) => setTime(e.target.value)}
       >
         {availableTimes.map((t) => (
@@ -62,6 +78,8 @@ function BookingForm({
         max="10"
         id="guests"
         value={guests}
+        required
+        aria-label="Number of guests"
         onChange={(e) => {
           const v = Number(e.target.value);
           if (!Number.isNaN(v)) setGuests(Math.min(10, Math.max(1, v)));
@@ -76,7 +94,17 @@ function BookingForm({
         <option value="Birthday">Birthday</option>
         <option value="Anniversary">Anniversary</option>
       </select>
-      <input type="submit" value="Make Your reservation" />
+      {submitError && (
+        <p role="alert" style={{ color: '#c00', fontSize: '0.9em', margin: 0 }}>
+          {submitError}
+        </p>
+      )}
+      <input
+        type="submit"
+        value="Make Your reservation"
+        disabled={!isFormValid}
+        aria-label="Submit reservation"
+      />
     </form>
   );
 }
